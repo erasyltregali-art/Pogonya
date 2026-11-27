@@ -19,8 +19,8 @@ void UPogonyaGameViewportClient::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    UWorld* World = GetWorld();
-    if (!World || CheckedWorld.Get() == World)
+    UWorld* CurrentWorld = GetWorld();
+    if (!CurrentWorld || CheckedWorld.Get() == CurrentWorld)
     {
         return;
     }
@@ -33,22 +33,22 @@ void UPogonyaGameViewportClient::Tick(float DeltaTime)
     }
 
     const TCHAR* CommandLine = FCommandLine::Get();
-    if (!FApp::CanEverRender() || World->GetNetMode() != NM_Standalone ||
-        !World->GetMapName().EndsWith(TEXT("L_Sector04")) ||
+    if (!FApp::CanEverRender() || CurrentWorld->GetNetMode() != NM_Standalone ||
+        !CurrentWorld->GetMapName().EndsWith(TEXT("L_Sector04")) ||
         FParse::Param(CommandLine, TEXT("PogonyaBlueprintSelfTest")) ||
         FParse::Param(CommandLine, TEXT("PogonyaBlueprintPreview")))
     {
-        CheckedWorld = World;
+        CheckedWorld = CurrentWorld;
         return;
     }
 
-    APlayerController* Controller = World->GetFirstPlayerController();
-    if (!Viewport || !Controller || !Controller->IsLocalController() || !World->HasBegunPlay())
+    APlayerController* Controller = CurrentWorld->GetFirstPlayerController();
+    if (!Viewport || !Controller || !Controller->IsLocalController() || !CurrentWorld->HasBegunPlay())
     {
         return;
     }
 
-    CheckedWorld = World;
+    CheckedWorld = CurrentWorld;
     if (Controller->SetPause(true))
     {
         ShowMainMenu(*Controller);
